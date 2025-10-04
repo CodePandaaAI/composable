@@ -1,46 +1,51 @@
 package com.naulian.composable.acc
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.naulian.composable.core.Screen
 import com.naulian.composable.core.component.ComposableTopAppBar
-import com.naulian.composable.core.component.ListItemText
-import com.naulian.neumorphic.NeumorphicDownHorizontalDivider
+import com.naulian.composable.core.component.LazyItemList
+import com.naulian.composable.core.model.ComponentItem
 
 sealed interface AccUIEvent {
     data object Back : AccUIEvent
     data class Navigate(val route: Screen) : AccUIEvent
 }
 
-private val animatedCCItems = listOf(
-    AnimatedCCItem(
+private val accItemList = listOf(
+    ComponentItem(
         name = "Typing Text",
         contributor = "Shree Bhargav R K",
-        route = Screen.TypingText
+        route = Screen.TypingText,
+        component = { EmptyComponent(it) }
     ),
-    AnimatedCCItem(
+    ComponentItem(
         name = "Pulse Heart",
         contributor = "Shree Bhargav R K",
-        route = Screen.PulseHeart
+        route = Screen.PulseHeart,
+        component = { EmptyComponent(it) }
     ),
-    AnimatedCCItem(
+    ComponentItem(
         name = "Glitch Effect",
         contributor = "Shree Bhargav R K",
-        route = Screen.GlitchEffect
+        route = Screen.GlitchEffect,
+        component = { EmptyComponent(it) }
     ),
-    AnimatedCCItem(
+    ComponentItem(
         name = "Analog Clock",
         contributor = "Naulian",
-        route = Screen.Clock
+        route = Screen.Clock,
+        component = { EmptyComponent(it) }
+    ),
+    ComponentItem(
+        name = "Animated Counter",
+        contributor = "Eleazar Cole-Showers",
+        route = Screen.Counter,
+        component = { EmptyComponent(it) }
     )
 )
 
@@ -57,30 +62,11 @@ fun AnimatedCCScreenUI(
             )
         }
     ) { scaffoldPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(scaffoldPadding)
-        ) {
-            item {
-                NeumorphicDownHorizontalDivider()
-            }
-
-            items(items = animatedCCItems) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { uiEvent(AccUIEvent.Navigate(it.route)) }
-                        .padding(20.dp)
-                ) {
-                    ListItemText(title = it.name, contributor = it.contributor)
-                }
-                NeumorphicDownHorizontalDivider()
-            }
-        }
+        LazyItemList(
+            items = accItemList,
+            onClickItem = { uiEvent(AccUIEvent.Navigate(it.route)) },
+            modifier = Modifier.fillMaxSize()
+                .padding(scaffoldPadding)
+        )
     }
 }
-
-private data class AnimatedCCItem(
-    val name: String,
-    val contributor: String,
-    val route: Screen
-)

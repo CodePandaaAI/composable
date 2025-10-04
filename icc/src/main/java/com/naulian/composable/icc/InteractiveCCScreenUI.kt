@@ -1,21 +1,16 @@
 package com.naulian.composable.icc
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.naulian.composable.core.Screen
 import com.naulian.composable.core.component.ComposableTopAppBar
-import com.naulian.composable.core.component.ListItemText
+import com.naulian.composable.core.component.LazyItemList
+import com.naulian.composable.core.model.ComponentItem
 import com.naulian.modify.ExperimentalModifyApi
-import com.naulian.neumorphic.NeumorphicDownHorizontalDivider
 
 sealed interface IccUIEvent {
     data object Back : IccUIEvent
@@ -23,30 +18,53 @@ sealed interface IccUIEvent {
 }
 
 private val iccItemList = listOf(
-    InteractiveCCItem(
+    ComponentItem(
         name = "Rating Stars",
         contributor = "Naulian",
-        route = Screen.RatingStars
+        route = Screen.RatingStars,
+        component = { RatingComponent(modifier = it) }
     ),
-    InteractiveCCItem(
-        name = "Parallax Card Stack",
+    ComponentItem(
+        name = "Stackable Item",
         contributor = "Aryan Jaiswal",
-        route = Screen.ParallaxCardStack
+        route = Screen.ParallaxCardStack,
+        component = { StackableItemComponent(modifier = it) }
     ),
-    InteractiveCCItem(
+    ComponentItem(
         name = "Better Carousel",
         contributor = "Aryan Jaiswal",
-        route = Screen.BetterCarousel
+        route = Screen.BetterCarousel,
+        component = { BetterCarouselComponent(modifier = it) }
     ),
-    InteractiveCCItem(
+    ComponentItem(
         name = "Steps Progress",
         contributor = "Aryan Singh",
-        route = Screen.StepsProgress
+        route = Screen.StepsProgress,
+        component = { StepsComponent(modifier = it) }
     ),
-    InteractiveCCItem(
+    ComponentItem(
         name = "Calender Top Bar",
         contributor = "Zain ul Abdin",
-        route = Screen.CalenderTopBar
+        route = Screen.CalenderTopBar,
+        component = { EmptyComponent(modifier = it) }
+    ),
+    ComponentItem(
+        name = "Raised Button",
+        contributor = "Romit Sharma",
+        route = Screen.CylindricalButtons,
+        component = { EmptyComponent(modifier = it) }
+    ),
+    ComponentItem(
+        name = "Physics Button",
+        contributor = "Eleazar Cole-Showers",
+        route = Screen.PhysicsButton,
+        component = { EmptyComponent(modifier = it) }
+    ),
+    ComponentItem(
+        name = "Audio Player",
+        contributor = "Samarth",
+        route = Screen.AudioPlayer,
+        component = { EmptyComponent(modifier = it) }
     )
 )
 
@@ -63,30 +81,11 @@ fun InteractiveCCScreenUI(
             )
         }
     ) { scaffoldPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(scaffoldPadding)
-        ) {
-            item {
-                NeumorphicDownHorizontalDivider()
-            }
-
-            items(items = iccItemList) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { uiEvent(IccUIEvent.Navigate(it.route)) }
-                        .padding(20.dp)
-                ) {
-                    ListItemText(title = it.name, contributor = it.contributor)
-                }
-                NeumorphicDownHorizontalDivider()
-            }
-        }
+        LazyItemList(
+            items = iccItemList,
+            onClickItem = { uiEvent(IccUIEvent.Navigate(it.route)) },
+            modifier = Modifier.fillMaxSize()
+                .padding(scaffoldPadding)
+        )
     }
 }
-
-private data class InteractiveCCItem(
-    val name: String,
-    val contributor: String,
-    val route: Screen
-)

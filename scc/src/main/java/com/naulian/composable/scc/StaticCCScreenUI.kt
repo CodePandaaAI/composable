@@ -1,59 +1,64 @@
 package com.naulian.composable.scc
 
-import android.R.attr.name
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.naulian.composable.core.Screen
 import com.naulian.composable.core.component.ComposableTopAppBar
-import com.naulian.composable.core.component.ListItemText
+import com.naulian.composable.core.component.LazyItemList
+import com.naulian.composable.core.model.ComponentItem
 import com.naulian.modify.ExperimentalModifyApi
-import com.naulian.modify.columnItem
-import com.naulian.neumorphic.NeumorphicDownHorizontalDivider
 
 sealed interface SccUIEvent {
     data object Back : SccUIEvent
-    data class Navigate(val route : Screen) : SccUIEvent
+    data class Navigate(val route: Screen) : SccUIEvent
 }
 
 private val sccItemList = listOf(
-    StaticCCItem(
+    ComponentItem(
         name = "Neumorphism",
         contributor = "Naulian",
-        route = Screen.Neumorphism
+        route = Screen.Neumorphism,
+        component = { NeumorphismComponent(modifier = it) }
     ),
-    StaticCCItem(
+    ComponentItem(
         name = "Grid Background",
         contributor = "Naulian",
-        route = Screen.GridBackground
+        route = Screen.GridBackground,
+        component = { GridBgComponent(modifier = it) }
     ),
-    StaticCCItem(
+    ComponentItem(
         name = "Cornered Box",
         contributor = "Naulian",
-        route = Screen.CorneredBox
+        route = Screen.CorneredBox,
+        component = { CorneredBoxComponent(modifier = it) }
     ),
-    StaticCCItem(
+    ComponentItem(
         name = "Movie Ticket",
         contributor = "Prashant Panwar",
-        route = Screen.MovieTicket
+        route = Screen.MovieTicket,
+        component = { TicketComponent(modifier = it) }
     ),
-    StaticCCItem(
+    ComponentItem(
         name = "Glass Card",
         contributor = "Shree Bhargav R K",
-        route = Screen.GlassCard
+        route = Screen.GlassCard,
+        component = { GlassCardComponent(modifier = it) }
     ),
-    StaticCCItem(
+    ComponentItem(
         name = "Depth Card",
         contributor = "Romit Sharma",
-        route = Screen.DepthCard
+        route = Screen.DepthCard,
+        component = { DepthCardComponent(modifier = it) }
+    ),
+    ComponentItem(
+        name = "Cafe Receipt",
+        contributor = "Prashant Panwar",
+        route = Screen.CafeReceipt,
+        component = { ReceiptComponent(modifier = it) }
     )
 )
 
@@ -70,30 +75,11 @@ fun StaticCCScreenUI(
             )
         }
     ) { scaffoldPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(scaffoldPadding)
-        ) {
-            item {
-                NeumorphicDownHorizontalDivider()
-            }
-
-            items(items = sccItemList) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { uiEvent(SccUIEvent.Navigate(it.route)) }
-                        .padding(20.dp)
-                ) {
-                    ListItemText(title = it.name, contributor = it.contributor)
-                }
-                NeumorphicDownHorizontalDivider()
-            }
-        }
+        LazyItemList(
+            items = sccItemList,
+            onClickItem = { uiEvent(SccUIEvent.Navigate(it.route)) },
+            modifier = Modifier.fillMaxSize()
+                .padding(scaffoldPadding)
+        )
     }
 }
-
-private data class StaticCCItem(
-    val name: String,
-    val contributor: String,
-    val route: Screen
-)
